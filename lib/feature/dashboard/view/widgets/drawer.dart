@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:temp_mail/feature/auth/view_model/sign_in_view_model.dart';
+import 'package:temp_mail/feature/dashboard/view_model/account_view_model.dart';
+import 'package:temp_mail/feature/dashboard/view_model/message_list_view_model.dart';
 
 class AppDrawer extends StatefulWidget {
   @override
@@ -9,6 +13,9 @@ class AppDrawer extends StatefulWidget {
 class _AppDrawerState extends State<AppDrawer> {
   @override
   Widget build(BuildContext context) {
+    var asignVm = Provider.of<SignInViewModel>(context, listen: true);
+    var messageListVM =
+        Provider.of<MessageListViewModel>(context, listen: true);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
@@ -46,13 +53,15 @@ class _AppDrawerState extends State<AppDrawer> {
                         child: ClipRRect(
                           child: CircleAvatar(
                             radius: 50,
+                            child: Text(
+                                "${messageListVM.messageListModel?.first.to?.first.address![0].toUpperCase()}${messageListVM.messageListModel?.first.to?.first.address![1].toUpperCase()}"),
                           ),
                           borderRadius: BorderRadius.circular(100),
                         ),
                       ),
                     ),
                     Text(
-                      "Akramuzzaman Siddique",
+                      "${messageListVM.messageListModel?.first.to?.first.address}",
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: Colors.white,
@@ -85,8 +94,9 @@ class _AppDrawerState extends State<AppDrawer> {
                   icon: Icons.refresh,
                   color: const Color(0xff0F1827),
                   isSelected: false,
-                  onTap: () {
+                  onTap: () async {
                     Navigator.pop(context);
+                    // await Future.wait([messageListVM.getMessageData()]);
                   },
                 ),
               ],

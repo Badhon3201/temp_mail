@@ -1,5 +1,11 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:temp_mail/feature/auth/repository/domain_repository.dart';
+import 'package:temp_mail/feature/auth/repository/sign_up_repository.dart';
+import 'package:temp_mail/feature/auth/view_model/domain_view_model.dart';
+import 'package:temp_mail/feature/auth/view_model/sign_up_view_model.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -24,6 +30,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    Future.delayed(Duration.zero, () async {
+      var daomainVm = Provider.of<DomainViewModel>(context, listen: false);
+      await daomainVm.getData();
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     // var vm = Provider.of<SignInViewModel>(context, listen: false);
@@ -73,7 +89,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget studentLoginForm() {
-    // var vm = Provider.of<SignInViewModel>(context, listen: false);
+    var daomainVm = Provider.of<DomainViewModel>(context, listen: true);
+    var signUmVm = Provider.of<SignUpViewModel>(context, listen: false);
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
@@ -85,17 +102,67 @@ class _SignUpScreenState extends State<SignUpScreen> {
             SizedBox(
               height: height * 0.03,
             ),
+            Stack(children: [
+              SizedBox(
+                height: 50,
+                child: TextFormField(
+                  autovalidateMode: AutovalidateMode.always,
+                  controller: usernameController,
+                  decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: Color(0XFF344151),
+                      hintText: 'Username',
+                      labelText: 'Username *',
+                      focusColor: Colors.white,
+                      labelStyle: TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: Colors.white60),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                          width: 2.0,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 2.0,
+                        ),
+                      )),
+                ),
+              ),
+              SizedBox(
+                height: 50,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Text(
+                        '@${daomainVm.domainModel?.first.domain}',
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ]),
+            const SizedBox(height: 15),
             SizedBox(
               height: 50,
               child: TextFormField(
                 autovalidateMode: AutovalidateMode.always,
-                controller: usernameController,
+                controller: passwordController,
+                obscureText: true,
+                // validator: (value) =>
+                //     value!.isEmpty ? 'Password field is required' : null,
                 decoration: const InputDecoration(
+                    hintText: 'Password',
+                    labelText: 'Password *',
+                    focusColor: Colors.grey,
                     filled: true,
                     fillColor: Color(0XFF344151),
-                    hintText: 'Username',
-                    labelText: 'Username *',
-                    focusColor: Colors.white,
+                    // errorText: 'This Field is required',
                     labelStyle: TextStyle(color: Colors.white),
                     hintStyle: TextStyle(color: Colors.white60),
                     focusedBorder: OutlineInputBorder(
@@ -112,54 +179,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     )),
               ),
             ),
-            const SizedBox(height: 15),
-            Stack(
-              children: [
-                SizedBox(
-                  height: 50,
-                  child: TextFormField(
-                    autovalidateMode: AutovalidateMode.always,
-                    controller: passwordController,
-                    obscureText: true,
-                    // validator: (value) =>
-                    //     value!.isEmpty ? 'Password field is required' : null,
-                    decoration: const InputDecoration(
-                        hintText: 'Password',
-                        labelText: 'Password *',
-                        focusColor: Colors.grey,
-                        filled: true,
-                        fillColor: Color(0XFF344151),
-                        // errorText: 'This Field is required',
-                        labelStyle: TextStyle(color: Colors.white),
-                        hintStyle: TextStyle(color: Colors.white60),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.white,
-                            width: 2.0,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey,
-                            width: 2.0,
-                          ),
-                        )),
-                  ),
-                ),
-                SizedBox(
-                  height: 50,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(right: 8.0),
-                        child: Text('@frederictonlawyer.com'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
             SizedBox(height: 25),
             Container(
               height: 45,
@@ -173,11 +192,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   textStyle: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                onPressed: () async {},
+                onPressed: () async {
+                  await signUmVm.getSignUpData(
+                      username: usernameController.text,
+                      password: passwordController.text);
+                  Navigator.pop(context);
+                },
                 child: const Text('Sign Up'),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             isValidte

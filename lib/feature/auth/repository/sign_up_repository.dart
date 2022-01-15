@@ -2,14 +2,19 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:temp_mail/feature/app_error.dart';
-import 'package:temp_mail/feature/auth/model/auth_model.dart';
-import 'package:http/http.dart' as http;
 
-class LoginRepository {
-  Future<Either<AppError, AuthModel>> fetchUserData(
+import 'package:http/http.dart' as http;
+import 'package:temp_mail/feature/auth/model/sign_up_model.dart';
+
+class SignUpRepository {
+  static int? statusCode;
+
+  Future<Either<AppError, SignUpModel>> fetchUserData(
       {String? username, String? password}) async {
+    print(username);
+    print(password);
     // BotToast.showLoading();
-    var url = "https://api.mail.tm/token";
+    var url = "https://api.mail.tm/accounts";
     var body = {"address": "$username", "password": "$password"};
     var response = await http.post(Uri.parse(url),
         body: jsonEncode(body),
@@ -21,7 +26,8 @@ class LoginRepository {
     print("WWW${response.body}");
 
     if (response.statusCode == 200) {
-      AuthModel data = authModelFromJson(response.body);
+      statusCode = response.statusCode;
+      SignUpModel data = signUpModelFromJson(response.body);
       print("200${response.body}");
       return Right(data);
     } else {

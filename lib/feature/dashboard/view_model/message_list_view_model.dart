@@ -14,7 +14,7 @@ class MessageListViewModel extends ChangeNotifier {
     _isLoading = true;
     var res = await MessageListRepositories().fetchMessages();
 
-    notifyListeners();
+    // notifyListeners();
     res.fold((l) {
       _appError = l;
       _isLoading = false;
@@ -26,9 +26,9 @@ class MessageListViewModel extends ChangeNotifier {
     });
   }
 
-  Future getMessageDetailsData() async {
+  Future getMessageDetailsData({String? id}) async {
     _isLoading = true;
-    var res = await MessageListRepositories().fetchMessagesDetails();
+    var res = await MessageListRepositories().fetchMessagesDetails(id: id);
 
     notifyListeners();
     res.fold((l) {
