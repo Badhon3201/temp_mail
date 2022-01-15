@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:temp_mail/feature/auth/view_model/access_token_view_model.dart';
 import 'package:temp_mail/feature/dashboard/repository/message_repository.dart';
@@ -28,15 +30,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     super.initState();
   }
-  // Future initState() async {
-  //   // TODO: implement initState
-  //   Future.delayed(Duration.zero, () async {
-  //     await Provider.of<AccessTokenProvider>(context, listen: false).getToken();
-  //     await MessageListRepositories().fetchMessages();
-  //   });
-  //
-  //   super.initState();
-  // }
+
+  DateTime now = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -116,9 +111,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       Row(
                                         children: [
                                           ClipRRect(
-                                            child: const CircleAvatar(
+                                            child: CircleAvatar(
                                               radius: 25,
-                                              child: Text('AK'),
+                                              child: Text(
+                                                  '${messageListVM.messageListModel![index].from!.name![0]}${messageListVM.messageListModel![index].from!.name![1]}'),
                                             ),
                                             borderRadius:
                                                 BorderRadius.circular(100),
@@ -126,35 +122,62 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           SizedBox(
                                             width: 20,
                                           ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: const [
-                                              Text('Azosro',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 17,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              Text('Title of mail',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      letterSpacing: 1,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              Text(
-                                                  'Description of the description',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      letterSpacing: 1)),
-                                            ],
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.55,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                    '${messageListVM.messageListModel![index].from!.name}',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 17,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                Text(
+                                                    '${messageListVM.messageListModel![index].subject}',
+                                                    style: const TextStyle(
+                                                        color: Colors.white,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        fontSize: 14,
+                                                        letterSpacing: 1,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                Text(
+                                                    '${messageListVM.messageListModel![index].intro}',
+                                                    style: const TextStyle(
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        color: Colors.white,
+                                                        letterSpacing: 1)),
+                                              ],
+                                            ),
                                           ),
                                         ],
                                       ),
-                                      const Text('Jan 12',
-                                          style:
-                                              TextStyle(color: Colors.white)),
+                                      DateFormat("dd-mm")
+                                                  .format(messageListVM
+                                                      .messageListModel![index]
+                                                      .createdAt as DateTime)
+                                                  .toString() ==
+                                              DateFormat("dd-mm")
+                                                  .format(now)
+                                                  .toString()
+                                          ? Text(
+                                              '${DateFormat("HH:mm").format(now)}',
+                                              style: const TextStyle(
+                                                  color: Colors.white))
+                                          : Text(
+                                              '${DateFormat("MMM dd").format(messageListVM.messageListModel![index].createdAt as DateTime).toString()}',
+                                              style: const TextStyle(
+                                                  color: Colors.white)),
                                     ],
                                   ),
                                   const Padding(
