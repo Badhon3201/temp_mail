@@ -17,16 +17,10 @@ class LoginRepository {
           'Content-type': 'application/json',
           'Accept': 'application/json'
         });
-    // var decodedJson = json.decode(response.body);
-    print("WWW${response.body}");
-
     if (response.statusCode == 200) {
       AuthModel data = authModelFromJson(response.body);
-      print("200${response.body}");
       return Right(data);
     } else {
-      // BotToast.closeAllLoading();
-      //BotToast.showText(text: 'Fail Data');
       return const Left(AppError.serverError);
     }
   }

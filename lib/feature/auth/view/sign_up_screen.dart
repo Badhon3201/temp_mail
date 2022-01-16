@@ -196,7 +196,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   await signUmVm.getSignUpData(
                       username: usernameController.text,
                       password: passwordController.text);
+
                   Navigator.pop(context);
+                  const snackBar = SnackBar(
+                    content: Text('Account Created Successfully!'),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 },
                 child: const Text('Sign Up'),
               ),
